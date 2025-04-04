@@ -6,16 +6,12 @@ const cors = require("cors");
 const app = express();
 require('dotenv').config();
 require('./user-service/config/authSetup'); //configuration de passport
-//kafka 
-const { initKafka } = require('./utils/kafka');
 
 initKafka().catch(console.error);
 //importation des routes
 const userRoutes = require('./user-service/routes/userRoutes');
 const authRoutes = require('./user-service/routes/authRoutes');
-const reservationRoutes = require('./routes/reservationRoutes');
-const historiqueRoutes = require('./routes/historiqueRoutes');
-const salleRoutes = require('./routes/salleRoutes');
+
 //middleware
 app.use(express.json());
 //aide les ports de back et front a s'adapter 
@@ -44,8 +40,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/users', userRoutes);
-app.use('/auth', authRoutes);
+
 
 // Optionnel : Middleware pour accéder à l'utilisateur connecté
 app.use((req, res, next) => {
@@ -53,9 +48,8 @@ app.use((req, res, next) => {
   next();
 });
 //other use routes
-app.use('/api/reservations', reservationRoutes);
-app.use('/api/historiques', historiqueRoutes);
-app.use('/api/salles', salleRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
  //pour les images BFR(Backend et Frontend Relation)
 //app.use('/uploads', express.static('uploads'));
