@@ -9,8 +9,8 @@ require('./user-service/config/authSetup'); //configuration de passport
 
 initKafka().catch(console.error);
 //importation des routes
-const userRoutes = require('./user-service/routes/userRoutes');
-const authRoutes = require('./user-service/routes/authRoutes');
+const userRoutes = require('./user-service/userRoutes');
+const authRoutes = require('./user-service/authRoutes');
 
 //middleware
 app.use(express.json());
@@ -55,7 +55,7 @@ app.use('/api/auth', authRoutes);
 //app.use('/uploads', express.static('uploads'));
 
 //appel a database.js 
-require('./database');
+require('./../database');
 
 //port d'ecoute du serveur
 const PORT = process.env.PORT || 3000;
