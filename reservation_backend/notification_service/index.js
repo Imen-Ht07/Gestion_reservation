@@ -7,11 +7,11 @@ const PORT = process.env.PORT || 3003;
 
 // Initialisation Kafka
 const kafka = new Kafka({
-  clientId: 'notification-service',
+  clientId: 'notification_service',
   brokers: [process.env.KAFKA_BROKER]
 });
 
-const consumer = kafka.consumer({ groupId: 'notification-group' });
+const consumer = kafka.consumer({ groupId: 'notification_group' });
 
 const startKafkaConsumer = async () => {
   await consumer.connect();

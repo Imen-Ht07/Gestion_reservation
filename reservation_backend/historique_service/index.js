@@ -9,5 +9,5 @@ app.use(express.json());
 app.use('/api/historiques', historiqueRoutes);
 
 //appel a database.js 
-require('./../database');
+require('./database');
 app.listen(PORT, () => console.log(`Historique Service écoute sur le port ${PORT}`));

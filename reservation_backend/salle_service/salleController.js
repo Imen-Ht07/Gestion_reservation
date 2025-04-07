@@ -1,4 +1,4 @@
-const { Salle } = require('../models/salle');
+const { Salle } = require('./salle');
 
 const getAllSalles = async (req, res) => {
     try {

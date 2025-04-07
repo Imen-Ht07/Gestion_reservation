@@ -8,5 +8,5 @@ const PORT = process.env.PORT || 3005;
 app.use(express.json());
 app.use('/api/salles', salleRoutes);
 //appel a database.js 
-require('./../database');
+require('./database');
 app.listen(PORT, () => console.log(`🚀 Salle Service écoute sur le port ${PORT}`));

@@ -1,14 +1,22 @@
 const passport = require('passport');
+const generateJWT = require('./config/generateJWT');
 
 const googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
 
-const googleAuthCallback = passport.authenticate('google', {
-  failureRedirect: '/login',
-  successRedirect: 'http://localhost:4200/dashboard', // Redirige vers le frontend Angular
-  failureFlash: true,  // Affiche un message d'erreur en cas d'échec
-  successFlash: 'Connexion réussie !' // Affiche un message de succès en cas de réussite
+// ici on utilise une fonction intermédiaire pour gérer la réponse
+const googleAuthCallback = (req, res, next) => {
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    if (err || !user) {
+      return res.redirect('http://localhost:4200/login?error=1');
+    }
 
-});
+    const token = generateJWT(user);
+
+    // Soit tu rediriges avec le token
+    return res.redirect(`http://localhost:4200/home?token=${token}`);
+  
+  })(req, res, next);
+};
 
 const logout = (req, res) => {
   req.logout(err => {

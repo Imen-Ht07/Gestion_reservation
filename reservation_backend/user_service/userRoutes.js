@@ -1,9 +1,10 @@
+const authorize = require('./middleware/authorize');
 const express = require('express');
-const { getAllUsers, updateUser, deleteUser } = require('../controllers/userController');
+const { getAllUsers, updateUser, deleteUser } = require('./userController');
 const router = express.Router();
 
-router.get('/', getAllUsers);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get('/',authorize('admin') , getAllUsers);
+router.put('/:id', authorize('admin') ,updateUser);
+router.delete('/:id',authorize('admin') ,deleteUser);
 
 module.exports = router;

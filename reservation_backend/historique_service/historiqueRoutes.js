@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllHistorique } = require('../controllers/historiqueController');
+const { getAllHistorique } = require('./historiqueController');
 const router = express.Router();
 
 router.get('/', getAllHistorique);

@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/user');
+const User = require('../user'); // Assure-toi que le fichier exporte directement le modèle
 
 passport.use(
   new GoogleStrategy(
@@ -11,17 +11,25 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('PROFILE GOOGLE >>', profile); // DEBUG
+
         let user = await User.findOne({ googleId: profile.id });
+
         if (!user) {
           user = await User.create({
             googleId: profile.id,
-            email: profile.emails[0].value,
-            name: profile.displayName,
+            email: profile.emails?.[0]?.value || '',
+            nom: profile.displayName || 'Sans nom', // use 'nom' instead of 'name'
           });
+          console.log('Utilisateur créé :', user);
+        } else {
+          console.log('Utilisateur existant :', user);
         }
-        return done(null, user);
+
+        done(null, user);
       } catch (err) {
-        return done(err, null);
+        console.error('Erreur stratégie Google:', err);
+        done(err, null);
       }
     }
   )

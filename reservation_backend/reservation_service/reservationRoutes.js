@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllReservations, createReservation, updateReservation, deleteReservation } = require('../controllers/reservationController');
+const { getAllReservations, createReservation, updateReservation, deleteReservation } = require('./reservationController');
 const router = express.Router();
 
 router.get('/', getAllReservations);

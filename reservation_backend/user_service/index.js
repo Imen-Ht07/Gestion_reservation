@@ -5,29 +5,14 @@ const passport = require('passport');
 const cors = require("cors");
 const app = express();
 require('dotenv').config();
-require('./user-service/config/authSetup'); //configuration de passport
-
-initKafka().catch(console.error);
+require('./config/authSetup'); //configuration de passport
 //importation des routes
-const userRoutes = require('./user-service/userRoutes');
-const authRoutes = require('./user-service/authRoutes');
+const userRoutes = require('./userRoutes');
+const authRoutes = require('./authRoutes');
 
 //middleware
 app.use(express.json());
-//aide les ports de back et front a s'adapter 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-   "Access-Control-Allow-Headers",
-   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method === "OPTIONS") {
-   res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-   return res.status(200).json({});
-  }
-  next();
- });
-
+app.use(express.urlencoded({ extended: true })); // Pour parser les données d'un formulaire
 app.use(cors());
  //USE express
 app.use(express.json());
@@ -55,7 +40,7 @@ app.use('/api/auth', authRoutes);
 //app.use('/uploads', express.static('uploads'));
 
 //appel a database.js 
-require('./../database');
+require('./database');
 
 //port d'ecoute du serveur
 const PORT = process.env.PORT || 3000;

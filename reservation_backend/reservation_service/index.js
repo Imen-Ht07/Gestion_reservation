@@ -9,5 +9,5 @@ app.use(express.json());
 app.use('/api/reservations', reservationRoutes);
 
 // Connexion à la base de données MongoDB
-require('./../database');
+require('./database');
 app.listen(PORT, () => console.log(`🚀 Reservation Service écoute sur le port ${PORT}`));
