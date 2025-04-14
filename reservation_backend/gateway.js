@@ -8,10 +8,10 @@ const PORT = process.env.PORT || 3000;
 // Définition des proxys pour chaque microservice
 const services = {
     user: process.env.USER_SERVICE_URL || 'http://localhost:3001',
-    salle: process.env.SALLE_SERVICE_URL || 'http://localhost:3002',
-    reservation: process.env.RESERVATION_SERVICE_URL || 'http://localhost:3003',
-    notification: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3004',
-    historique: process.env.HISTORIQUE_SERVICE_URL || 'http://localhost:3005',
+    salle: process.env.SALLE_SERVICE_URL || 'http://localhost:3005',
+    reservation: process.env.RESERVATION_SERVICE_URL || 'http://localhost:3004',
+    notification: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3003',
+    historique: process.env.HISTORIQUE_SERVICE_URL || 'http://localhost:3002',
 };
 
 // Middleware pour le logging des requêtes
@@ -29,5 +29,5 @@ app.use('/historique', createProxyMiddleware({ target: services.historique, chan
 
 // Démarrage du serveur API Gateway
 app.listen(PORT, () => {
-    console.log(`🚀 API Gateway en écoute sur le port ${PORT}`);
+    console.log(`API Gateway en écoute sur le port ${PORT}`);
 });

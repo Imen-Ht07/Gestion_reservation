@@ -1,50 +1,57 @@
-//importation
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 const app = express();
+
 require('dotenv').config();
-require('./config/authSetup'); //configuration de passport
-//importation des routes
+require('./config/authSetup'); // configuration de passport
+
+// Importation des routes
 const userRoutes = require('./userRoutes');
 const authRoutes = require('./authRoutes');
+const homeRoutes = require('./homeRoutes');
 
-//middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Pour parser les données d'un formulaire
+// Middleware
+app.use(cookieParser());
+app.use(express.json()); // Pour parser les données JSON
+app.use(express.urlencoded({ extended: true })); // Pour parser les données des formulaires
 app.use(cors());
- //USE express
-app.use(express.json());
-app.use(express.json());
+
+// Configuration de session
 app.use(session({
   secret: process.env.SESSION_SECRET || 'secret_key',
   resave: false,
   saveUninitialized: false,
 }));
+
+// Initialisation de Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-// Optionnel : Middleware pour accéder à l'utilisateur connecté
+// Middleware pour accéder à l'utilisateur connecté (optionnel)
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-//other use routes
+
+// Utilisation des routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/home', homeRoutes);
+// Redirection racine (facultatif)
+app.get('/', (req, res) => {
+  res.send('<h1>Bienvenue</h1><a href="/auth/google">Connexion Google</a>');
+});
+app.use(express.static('public'));
 
- //pour les images BFR(Backend et Frontend Relation)
-//app.use('/uploads', express.static('uploads'));
-
-//appel a database.js 
+// Appel à database.js
 require('./database');
 
-//port d'ecoute du serveur
-const PORT = process.env.PORT || 3000;
+// Port d'écoute du serveur
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-}); 
+});

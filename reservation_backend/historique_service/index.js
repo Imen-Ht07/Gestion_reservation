@@ -3,7 +3,7 @@ require('dotenv').config();
 const historiqueRoutes = require('./historiqueRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3005;
 
 app.use(express.json());
 app.use('/api/historiques', historiqueRoutes);

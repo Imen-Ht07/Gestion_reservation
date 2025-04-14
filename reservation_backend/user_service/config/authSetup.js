@@ -1,47 +1,45 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../user'); // Assure-toi que le fichier exporte directement le modèle
+const { Utilisateur } = require('../user'); 
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        console.log('PROFILE GOOGLE >>', profile); // DEBUG
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL, 
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    // Recherche un utilisateur existant avec le googleId
+    let user = await Utilisateur.findOne({ googleId: profile.id });
 
-        let user = await User.findOne({ googleId: profile.id });
+    if (!user) {
+      // Si l'utilisateur n'existe pas, le créer
+      user = new Utilisateur({
+        googleId: profile.id,
+        nom: profile.displayName,
+        email: profile.emails[0].value,
+        profilePicture: profile.photos[0].value,
+      });
 
-        if (!user) {
-          user = await User.create({
-            googleId: profile.id,
-            email: profile.emails?.[0]?.value || '',
-            nom: profile.displayName || 'Sans nom', // use 'nom' instead of 'name'
-          });
-          console.log('Utilisateur créé :', user);
-        } else {
-          console.log('Utilisateur existant :', user);
-        }
+      await user.save();
+console.log("Utilisateur sauvegardé dans MongoDB :", user);
 
-        done(null, user);
-      } catch (err) {
-        console.error('Erreur stratégie Google:', err);
-        done(err, null);
-      }
     }
-  )
-);
 
+    // Passer l'utilisateur trouvé à la méthode 'done' de Passport
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
+  }
+}));
+
+// Sérialiser et désérialiser l'utilisateur dans la session
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.id);  // Sauvegarder l'ID de l'utilisateur dans la session
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
+    const user = await Utilisateur.findById(id);
     done(null, user);
   } catch (err) {
     done(err, null);
