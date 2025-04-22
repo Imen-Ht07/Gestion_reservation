@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: app.local
+      http:
+        paths:
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 80
+          - path: /reservation
+            pathType: Prefix
+            backend:
+              service:
+                name: reservation-service
+                port:
+                  number: 80
+          - path: /notification
+            pathType: Prefix
+            backend:
+              service:
+                name: notification-service
+                port:
+                  number: 80
+          - path: /salle
+            pathType: Prefix
+            backend:
+              service:
+                name: salle-service
+                port:
+                  number: 80
+          - path: /historique
+            pathType: Prefix
+            backend:
+              service:
+                name: historique-service
+                port:
+                  number: 80

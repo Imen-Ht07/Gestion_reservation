@@ -1,10 +1,12 @@
 const express = require('express');
 const { Kafka } = require('kafkajs');
 require('dotenv').config();
+const helmet =require('helmet');
+
 
 const app = express();
 const PORT = process.env.PORT || 3003;
-
+app.use(helmet());
 // Initialisation Kafka
 const kafka = new Kafka({
   clientId: 'notification_service',

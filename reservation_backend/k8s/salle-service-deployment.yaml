@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salle-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salle-service
+  template:
+    metadata:
+      labels:
+        app: salle-service
+    spec:
+      containers:
+        - name: salle-service
+          image: imenht/salle-service:latest
+          ports:
+            - containerPort: 3004
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: MONGODB_URI
+              value: mongodb+srv://ImenHT:WKeNiqSH3x5zAcay@cluster0.qjhwp.mongodb.net/Reservation
+            - name: PORT
+              value: "3004"
