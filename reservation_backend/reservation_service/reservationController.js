@@ -1,5 +1,4 @@
 const Reservation = require('./reservation');
-const { publishReservationEvent } = require('./producerKafka');
 const axios = require('axios');
 const SALLE_SERVICE_URL = process.env.SALLE_SERVICE_URL || 'http://localhost:3004';
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3001';
@@ -43,21 +42,6 @@ const createReservation = async (req, res) => {
         const salle = salleResponse.data;
         const utilisateurResponse = await axios.get(`${USER_SERVICE_URL}/api/users/${utilisateur_id}`);
         const utilisateur = utilisateurResponse.data;
-
-        if (utilisateur && salle) {
-            await publishReservationEvent({
-                utilisateur_id: {
-                    email: utilisateur.email,
-                    nom: utilisateur.nom
-                },
-                salle_id: {
-                    nom: salle.nom
-                },
-                date_heure_debut: nouvelleReservation.date_heure_debut,
-                date_heure_fin: nouvelleReservation.date_heure_fin
-            });
-        }
-
         res.status(201).json(nouvelleReservation);
     } catch (error) {
         console.error('Erreur lors de la création de la réservation :', error.message);

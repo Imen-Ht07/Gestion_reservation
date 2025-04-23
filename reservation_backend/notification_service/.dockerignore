@@ -1,0 +1,9 @@
+// This file is used to specify files and directories that should be ignored by Docker when building an image.
+// It helps to keep the image size smaller and avoid including unnecessary files.
+node_modules/
+npm-debug.log
+package-lock.json
+.git
+Dockerfile
+.dockerignore
+*.log

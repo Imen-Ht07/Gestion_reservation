@@ -5,8 +5,7 @@ const helmet =require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-const { initKafkaProducer } = require('./producerKafka');
-initKafkaProducer();
+
 app.use(express.json());
 app.use('/api/reservations', reservationRoutes);
 app.use(helmet());
