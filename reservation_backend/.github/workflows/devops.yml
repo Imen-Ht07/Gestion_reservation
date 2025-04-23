@@ -26,3 +26,20 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./user_service
+        run: npm install
+
+      - name: Run lint
+        working-directory: ./user_service
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: ./user_service
+        run: npm test
