@@ -6,43 +6,48 @@ const { Utilisateur } = require('./user');
 const googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
 
 // Callback de l'authentification Google
+const googleAuthCallback = (req, res, next) => {
+  passport.authenticate('google', { session: false }, async (err, user, info) => {
+    if (err || !user) {
+      return res.redirect('/'); // Si l'utilisateur n'est pas trouvé ou erreur
+    }
+    try {
+      const role = 'utilisateur';
+      // vérifier si l'utilisateur est déjà dans la BDD
+      let existingUser = await Utilisateur.findOne({ googleId: user.googleId });
 
-const googleAuthCallback = async (req, res, next) => {
-  try {
-    const profile = req.user;
-    const existingUser = await Utilisateur.findOne({ googleId: profile.googleId });
+      if (!existingUser) {
+        existingUser = new Utilisateur({
+          googleId: user.googleId,
+          nom: user.nom || user.name || user.displayName,
+          email: user.email,
+          role: role, 
+          profilePicture: user.profilePicture,
+        });
 
-    if (existingUser) {
+        await existingUser.save();
+        console.log('Nouvel utilisateur sauvegardé :', existingUser);
+      } else {
+        console.log('Utilisateur déjà existant :', existingUser);
+      }
+
+      // Génération du token
       const token = generateJWT(existingUser);
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000, // 1 jour
-      });
-      return res.redirect('/home');
-    } else {
-      const newUser = new Utilisateur({
-        googleId: profile.id,
-        nom: profile.displayName,
-        email: profile.emails[0].value,
-        profilePicture: profile.photos[0].value,
-      });
 
-      await newUser.save();
-      const token = generateJWT(newUser);
       res.cookie('jwt', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
       });
+
       return res.redirect('/home');
+    } catch (err) {
+      console.error('Erreur lors du callback Google :', err);
+      return res.status(500).json({ message: 'Erreur interne', error: err });
     }
-  } catch (error) {
-    console.error('Erreur lors du callback Google :', error);
-    return res.redirect('/home?error=google_callback_failed');
-  }
+  })(req, res, next);
 };
-   
+
 // Fonction de déconnexion
 const logout = (req, res) => {
   req.logout((err) => {
