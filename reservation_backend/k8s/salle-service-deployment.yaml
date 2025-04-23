@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: salle-service
-          image: imenht/salle-service:latest
+          image: imenht/salle_service:latest
           ports:
             - containerPort: 3004
           resources:

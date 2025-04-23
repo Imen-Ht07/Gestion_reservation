@@ -4,7 +4,7 @@ const authenticateJWT = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (!token) {
-    return res.redirect('/login');
+    return res.redirect('/home');
   }
 
   try {
@@ -12,7 +12,7 @@ const authenticateJWT = (req, res, next) => {
     req.user = user; 
     next(); 
   } catch (err) {
-    return res.redirect('/login?token_invalid=1');
+    return res.redirect('/home?token_invalid=1');
   }
 };
 

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: imenht/notification-service:latest
+          image: imenht/notification_service:latest
           ports:
             - containerPort: 3003
           resources:

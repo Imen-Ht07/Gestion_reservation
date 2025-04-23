@@ -4,6 +4,9 @@ const passport = require('passport');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const app = express();
+const helmet =require('helmet');
+
+
 
 require('dotenv').config();
 require('./config/authSetup'); // configuration de passport
@@ -18,7 +21,7 @@ app.use(cookieParser());
 app.use(express.json()); // Pour parser les données JSON
 app.use(express.urlencoded({ extended: true })); // Pour parser les données des formulaires
 app.use(cors());
-
+app.use(helmet());
 // Configuration de session
 app.use(session({
   secret: process.env.SESSION_SECRET || 'secret_key',
@@ -42,7 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/home', homeRoutes);
 // Redirection racine (facultatif)
 app.get('/', (req, res) => {
-  res.send('<h1>Bienvenue</h1><a href="/auth/google">Connexion Google</a>');
+  res.send('<h1>Bienvenue</h1><a href="api/auth/google">Connexion Google</a>');
 });
 app.use(express.static('public'));
 

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: imenht/user-service:latest
+          image: imenht/user_service:latest
           ports:
             - containerPort: 3001
           resources:

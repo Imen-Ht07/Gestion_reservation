@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: historique-service
-          image: imenht/historique-service:latest
+          image: imenht/historique_service:latest
           ports:
             - containerPort: 3005
           resources:
