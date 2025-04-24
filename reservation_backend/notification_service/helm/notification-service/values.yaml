@@ -3,13 +3,13 @@ autoscaling:
   enabled: false
 
 image:
-  repository: imenht/salle_service
+  repository: imenht/notification_service
   pullPolicy: IfNotPresent
   tag: "latest"
 
 service:
   type: ClusterIP
-  port: 3004
+  port: 3003
 
 ingress:
     enabled: true
