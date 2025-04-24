@@ -1,50 +1,82 @@
+# Nombre de réplicas par service
 replicaCount: 1
-autoscaling:
-  enabled: false
 
+# Autoscaling (Si tu veux activer l'autoscaling pour les microservices, modifie ce paramètre)
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+# Image du container (microservice spécifique)
 image:
   repository: imenht/historique_service
   pullPolicy: IfNotPresent
   tag: "latest"
 
+# Configuration du service
 service:
   type: ClusterIP
   port: 3005
 
+# Configuration de l'Ingress (si nécessaire pour chaque service)
 ingress:
-    enabled: true
-    className: nginx
-    annotations:
+  enabled: true
+  className: nginx
+  annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    hosts:
+  hosts:
     - host: historique-service.local
       paths:
         - path: /
           pathType: Prefix
-    tls: []
+  tls: []
 
+# Annotations et labels pour le pod (ajuster selon les besoins)
 podAnnotations: {}
 podLabels: {}
 
+# Secrets pour récupérer les images (si nécessaire)
 imagePullSecrets: []
 
+# Compte de service pour l'accès aux ressources Kubernetes
 serviceAccount:
   create: true
   name: ""
 
+# Sécurité du pod (à ajuster en fonction des besoins)
 podSecurityContext: {}
-
 securityContext: {}
 
-resources: {}
+# Resources (ajuster selon les besoins)
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
 
-livenessProbe: {}
-readinessProbe: {}
+# Liveness et Readiness probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3005
+  initialDelaySeconds: 10
+  periodSeconds: 5
 
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3005
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# Montée des volumes (si nécessaire)
 volumeMounts: []
 volumes: []
 
+# Sélection des nœuds Kubernetes
 nodeSelector: {}
 tolerations: []
 affinity: []
-

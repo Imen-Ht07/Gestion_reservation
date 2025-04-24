@@ -43,3 +43,24 @@ jobs:
       - name: Run tests
         working-directory: ./historique_service
         run: npm test
+      - name: Slack Notification on Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "Le build et push de *historique-service* a réussi sur la branche *main* !"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Slack Notification on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "Le pipeline CI/CD de *historique-service* a échoué sur *main*. Consultez les logs pour plus de détails !"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

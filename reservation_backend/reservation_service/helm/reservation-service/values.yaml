@@ -1,6 +1,9 @@
 replicaCount: 1
 autoscaling:
   enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
 
 image:
   repository: imenht/reservation_service
@@ -10,20 +13,25 @@ image:
 service:
   type: ClusterIP
   port: 3002
+  targetPort: 3002
+  name: reservation-service
 
 ingress:
-    enabled: true
-    className: nginx
-    annotations:
+  enabled: true
+  className: nginx
+  annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    hosts:
+  hosts:
     - host: reservation-service.local
       paths:
         - path: /
           pathType: Prefix
-    tls: []
+  tls: []
 
-podAnnotations: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+
 podLabels: {}
 
 imagePullSecrets: []
@@ -32,14 +40,42 @@ serviceAccount:
   create: true
   name: ""
 
-podSecurityContext: {}
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
 
-resources: {}
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
 
-livenessProbe: {}
-readinessProbe: {}
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3002
+  initialDelaySeconds: 15
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3002
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
 
 volumeMounts: []
 volumes: []
@@ -47,4 +83,3 @@ volumes: []
 nodeSelector: {}
 tolerations: []
 affinity: []
-
